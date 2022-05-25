@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>List</title>
+{% endblock %}
+
+{% block body %} 
+<div>
+    <h3>The List</h3>
+
+
+    {% if items|length < 1 %}
+    <p>NO ITEMS IN THE LIST</p>
+    {% else %}
+    <table>
+        <tr>
+            <th>Index</th>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>${{ item.price }}</td>
+        </tr>
+
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+
+<div>
+    <h3>Create a List!</h3>
+    <form action="/" method="POST">
+        <label for="name">Item Name:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label for="price">Price</label>
+        <input type="text" id="price" name="price">
+        <br>
+        <input type="submit" value="Add Item">
+    </form>
+</div>
+
+{% endblock %} 
