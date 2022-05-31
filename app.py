@@ -9,26 +9,62 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable = False)
     price = db.Column(db.Float, nullable = False)
-    
+    list_id = db.Column(db.Integer, db.ForeignKey('list.id'), nullable=False)
+    list = db.relationship('List', backref=db.backref('item', lazy=True))
+    catagory_id = db.Column(db.Integer, db.ForeignKey('catagory.id'), nullable=False)
+    catagory = db.relationship('Catagory', backref=db.backref('catagory', lazy=True))
+
     def __repr__(self):
-        return '<Item %r'%self.id
+        return '<Item %r>'%self.name
+
+class List(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return '<List %r>' % self.name
+
+class Catagory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return '<Catagory %r>' %self.name
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    if request.method =='POST':
+    view_list = []
+    list_name = ""
+    exists = False
+    l = 0
+
+    print(request.args.get('list'))
+
+    if request.args.get('list') is not None:
+        l = int(request.args.get('list'))
+
+        view_list = Item.query.filter_by(list_id = l).all()
+        
+        list_name = List.query.filter_by(id = l).first()
+        if list_name is not None:
+            list_name = list_name.name   
+            exists = True
+        
+    return render_template("index.html", l=l, view_list = view_list, list_name=list_name, exists = exists )
+
+@app.route('/create', methods = ['POST', 'GET'])
+def create():
+    
+
+    if request.method == 'POST':
         name = request.form['name']
-        price = float(request.form['price'])
+        db.session.add(List(name=name))
+        db.session.commit()
 
-        new_item = Item(name =name, price = price)
+    lists = List.query.all()
+    return render_template("create.html", lists = lists)
 
-        try:
-            db.session.add(new_item)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'Error with db commit.'
-    else:
-        items = Item.query.all()
-        return render_template('index.html', items = items)
+
 if __name__ == '__main__':
     app.run(debug=True)

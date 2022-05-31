@@ -4,44 +4,44 @@
 <title>List</title>
 {% endblock %}
 
-{% block body %} 
+{% block body %}
 <div>
-    <h3>The List</h3>
-
-
-    {% if items|length < 1 %}
-    <p>NO ITEMS IN THE LIST</p>
-    {% else %}
-    <table>
-        <tr>
-            <th>Index</th>
-            <th>Name</th>
-            <th>Price</th>
-        </tr>
-        {% for item in items %}
-        <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.name }}</td>
-            <td>${{ item.price }}</td>
-        </tr>
-
-        {% endfor %}
-    </table>
-    {% endif %}
+    <form action="/" method="GET">
+        <input type="text" id="list" name="list">
+        <input type="submit" value="Gimme List">
+    </form>
 </div>
 
-
 <div>
-    <h3>Create a List!</h3>
-    <form action="/" method="POST">
-        <label for="name">Item Name:</label>
-        <input type="text" id="name" name="name">
-        <br>
-        <label for="price">Price</label>
-        <input type="text" id="price" name="price">
-        <br>
-        <input type="submit" value="Add Item">
-    </form>
+    {% if l>0 %}
+
+        {% if exists %}
+
+            <p>List selected: {{list_name}}</p>
+
+            <table>
+                <tr>
+                    <th>Index</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Catagory</th>
+                </tr>
+                {% for v in view_list %} 
+                    <tr>
+                        <td>{{ v.id }}</td>
+                        <td>{{ v.name }}</td>
+                        <td>${{ v.price }}</td>
+                        <td>{{ v.catagory.name }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}    
+        <p>That list does not exist!</p> 
+        {% endif %}
+
+    {% else %}
+    <p>no list selected</p>
+    {% endif %}
 </div>
 
 {% endblock %} 
