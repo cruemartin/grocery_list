@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>{{ list.name }}</title>
+{% endblock %} 
+
+{% block body %}
+
+<div>
+    <h1>{{ list.name }}</h1>
+    <hr>
+
+    <table>
+        <thead>
+            <th>Index</th>
+            <th>Item Name</th>
+            <th>Price</th>
+            <th>Catagory</th>
+        </thead>
+
+        {% for item in items %} 
+            <tr>
+                <td>{{ item.id }}.</td>
+                <td>{{ item.name }}</td>
+                <td>${{ item.price}}</td>
+                <td>{{ item.catagory.name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div>
+    <h3>Add Items to list</h3>
+    <form action="/add_item/{{ list.id }}" method="POST">
+        <label for="name">Item Name:</label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price">
+        <br>
+        <label for="cat">Item Name:</label>
+        <select name="cat" id="cat">
+            {% for c in catagory %} 
+                <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" value="Add Item">
+    </form>
+</div>
+
+{% endblock %}
