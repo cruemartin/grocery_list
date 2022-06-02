@@ -49,4 +49,21 @@
     </form>
 </div>
 
+<div>
+    <h3>Edit List Name</h3>
+    <form action="/edit_list_name/{{ list.id }}" method="POST">
+        <label for="list_name">New List Name</label>
+        <input type="text" id="list_name" name="list_name">
+        <br>
+        <input type="submit" value="Update Name">
+    </form>
+</div>
+
+<div>
+    <h3>Delete List?</h3>
+    <form action="/delete_list/{{ list.id }}" method="POST">
+        <input type="submit" value="Delete List">
+    </form>
+</div>
+
 {% endblock %}

@@ -57,6 +57,39 @@ def add_item(list_id):
     else:
         return redirect('/')
 
+@app.route('/edit_list_name/<int:list_id>', methods=['POST'])
+def edit_list_name(list_id):
+    if request.method == 'POST':
+        edit_list = List.query.filter_by(id= list_id).first()
+        edit_list.name= request.form['list_name']
+        db.session.commit()
+        return redirect(f'/view_list/{list_id}')
+    else:
+        return redirect('/')
 
+@app.route('/create_list', methods=['POST', 'GET'])
+def create_list():
+    if request.method == 'POST':
+        new_list = List(name=request.form['list_name'])
+        db.session.add(new_list)
+        db.session.commit()
+        return redirect(f'/view_list/{new_list.id}')
+    else:
+        return render_template('create_list.html')
+
+@app.route('/delete_list/<int:list_id>', methods=['POST'])
+def delete_list(list_id):
+    if request.method == 'POST':
+        del_items = Item.query.filter_by(list_id = list_id ).all()
+
+        for d in del_items:
+            db.session.delete(d)
+
+        del_list = List.query.filter_by(id = list_id).first()
+        db.session.delete(del_list)
+        db.session.commit()
+        return redirect('/')
+    else:
+        return redirect('/')
 if __name__ == '__main__':
     app.run(debug=True)
