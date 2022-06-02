@@ -1,3 +1,4 @@
+from ast import Pass
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
@@ -32,39 +33,63 @@ class Catagory(db.Model):
         return '<Catagory %r>' %self.name
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/')
 def index():
-    view_list = []
-    list_name = ""
-    exists = False
-    l = 0
+    all_lists = List.query.all()
+    return render_template('index.html', all_lists = all_lists)
 
-    print(request.args.get('list'))
 
-    if request.args.get('list') is not None:
-        l = int(request.args.get('list'))
+@app.route('/view_list/<int:list_id>', methods=['GET', 'POST'])
+def view_list(list_id):
+    print("blah blah")
+    print(f"list id : {list_id}")
+    item_list = Item.query.filter_by(list_id = list_id).all()
+    curr_list = List.query.filter_by(id = list_id).first_or_404(description="Error from list")
+    cat = Catagory.query.all()
+    return render_template('view_list.html', list = curr_list, items = item_list, catagory = cat)
 
-        view_list = Item.query.filter_by(list_id = l).all()
-        
-        list_name = List.query.filter_by(id = l).first()
-        if list_name is not None:
-            list_name = list_name.name   
-            exists = True
-        
-    return render_template("index.html", l=l, view_list = view_list, list_name=list_name, exists = exists )
-
-@app.route('/create', methods = ['POST', 'GET'])
-def create():
-    
-
+@app.route('/add_item/<int:list_id>', methods=['POST'])
+def add_item(list_id):
     if request.method == 'POST':
-        name = request.form['name']
-        db.session.add(List(name=name))
+        db.session.add(Item(name = request.form['name'], price=float(request.form['price']), list_id = list_id, catagory_id = int(request.form['cat'])))
         db.session.commit()
+        return redirect(f'/view_list/{list_id}')
+    else:
+        return redirect('/')
 
-    lists = List.query.all()
-    return render_template("create.html", lists = lists)
+@app.route('/edit_list_name/<int:list_id>', methods=['POST'])
+def edit_list_name(list_id):
+    if request.method == 'POST':
+        edit_list = List.query.filter_by(id= list_id).first()
+        edit_list.name= request.form['list_name']
+        db.session.commit()
+        return redirect(f'/view_list/{list_id}')
+    else:
+        return redirect('/')
 
+@app.route('/create_list', methods=['POST', 'GET'])
+def create_list():
+    if request.method == 'POST':
+        new_list = List(name=request.form['list_name'])
+        db.session.add(new_list)
+        db.session.commit()
+        return redirect(f'/view_list/{new_list.id}')
+    else:
+        return render_template('create_list.html')
 
+@app.route('/delete_list/<int:list_id>', methods=['POST'])
+def delete_list(list_id):
+    if request.method == 'POST':
+        del_items = Item.query.filter_by(list_id = list_id ).all()
+
+        for d in del_items:
+            db.session.delete(d)
+
+        del_list = List.query.filter_by(id = list_id).first()
+        db.session.delete(del_list)
+        db.session.commit()
+        return redirect('/')
+    else:
+        return redirect('/')
 if __name__ == '__main__':
     app.run(debug=True)
