@@ -1,0 +1,26 @@
+{% extends 'base.html' %} 
+
+{% block head %} 
+<title>Create Catagory</title>
+{% endblock %} 
+
+{% block body %} 
+<div>
+    <h3>Catagories</h3>
+    <ul>
+        {% for cat in cur_cat %}
+            <li>{{ cat.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
+    <h3>Add New Catagory</h3>
+    <form action="/create_catagory" method="POST">
+        <label for="new_cat">Catagory Name:</label>
+        <input type="text" id="new_cat" name="new_cat">
+        <br>
+        <input type="submit" value="New Catagory">
+    </form>
+</div>
+{% endblock %}

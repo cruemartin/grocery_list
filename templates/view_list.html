@@ -16,6 +16,7 @@
             <th>Item Name</th>
             <th>Price</th>
             <th>Catagory</th>
+            <th>delete</th>
         </thead>
 
         {% for item in items %} 
@@ -24,6 +25,7 @@
                 <td>{{ item.name }}</td>
                 <td>${{ item.price}}</td>
                 <td>{{ item.catagory.name }}</td>
+                <td><a href="/delete_item/{{ item.id }}/{{ item.list_id}}">delete</a></td>
             </tr>
         {% endfor %}
     </table>

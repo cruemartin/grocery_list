@@ -91,5 +91,26 @@ def delete_list(list_id):
         return redirect('/')
     else:
         return redirect('/')
+
+@app.route('/create_catagory', methods=['POST','GET'])
+def create_catagory():
+    if request.method == 'POST':
+        db.session.add(Catagory(name=request.form['new_cat']))
+        db.session.commit()
+
+        cur_cat = Catagory.query.all()
+        return render_template('create_catagory.html', cur_cat = cur_cat)
+
+    else:
+        cur_cat = Catagory.query.all()
+        return render_template('create_catagory.html', cur_cat = cur_cat)
+
+@app.route('/delete_item/<int:item_id>/<int:list_id>')
+def delete_item(item_id, list_id):
+        del_item = Item.query.filter_by(id = item_id).first()
+        db.session.delete(del_item)
+        db.session.commit()
+        return redirect(f'/view_list/{list_id}')
+
 if __name__ == '__main__':
     app.run(debug=True)
