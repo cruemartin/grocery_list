@@ -88,9 +88,7 @@ def delete_list(list_id):
         del_list = List.query.filter_by(id = list_id).first()
         db.session.delete(del_list)
         db.session.commit()
-        return redirect('/')
-    else:
-        return redirect('/')
+    return redirect('/')
 
 @app.route('/create_catagory', methods=['POST','GET'])
 def create_catagory():
@@ -98,19 +96,27 @@ def create_catagory():
         db.session.add(Catagory(name=request.form['new_cat']))
         db.session.commit()
 
-        cur_cat = Catagory.query.all()
-        return render_template('create_catagory.html', cur_cat = cur_cat)
-
-    else:
-        cur_cat = Catagory.query.all()
-        return render_template('create_catagory.html', cur_cat = cur_cat)
+    cur_cat = Catagory.query.all()
+    return render_template('create_catagory.html', cur_cat = cur_cat)
 
 @app.route('/delete_item/<int:item_id>/<int:list_id>')
 def delete_item(item_id, list_id):
-        del_item = Item.query.filter_by(id = item_id).first()
-        db.session.delete(del_item)
+    del_item = Item.query.filter_by(id = item_id).first()
+    db.session.delete(del_item)
+    db.session.commit()
+    return redirect(f'/view_list/{list_id}')
+
+@app.route('/update_item/<int:item_id>/<int:list_id>', methods=['POST'])
+def update_item(item_id, list_id):
+    if request.method == 'POST':
+        updated_item = Item.query.filter_by(id = item_id).first()
+        updated_item.name = request.form['name']
+        updated_item.price = float(request.form['price'])
+        updated_item.catagory_id = int(request.form['cat'])
+
         db.session.commit()
-        return redirect(f'/view_list/{list_id}')
+
+    return redirect(f'/view_list/{list_id}')
 
 if __name__ == '__main__':
     app.run(debug=True)

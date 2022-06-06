@@ -12,22 +12,48 @@
 
     <table>
         <thead>
-            <th>Index</th>
-            <th>Item Name</th>
-            <th>Price</th>
-            <th>Catagory</th>
-            <th>delete</th>
+            <tr>
+                <th>Index</th>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Catagory</th>
+                <th>delete</th>
+            </tr>
+            
         </thead>
 
-        {% for item in items %} 
-            <tr>
-                <td>{{ item.id }}.</td>
-                <td>{{ item.name }}</td>
-                <td>${{ item.price}}</td>
-                <td>{{ item.catagory.name }}</td>
-                <td><a href="/delete_item/{{ item.id }}/{{ item.list_id}}">delete</a></td>
-            </tr>
-        {% endfor %}
+        <tbody>
+            {% for item in items %} 
+                <tr>
+                    <td>{{ item.id }}.</td>
+                    <td>{{ item.name }}</td>
+                    <td>${{ item.price}}</td>
+                    <td>{{ item.catagory.name }}</td>
+                    <td><a href="/delete_item/{{ item.id }}/{{ item.list_id}}">delete</a></td>
+                    <td onClick="update_open('update_form_{{ item.id }}')">update</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="update_form_{{ item.id }}" style="display:none;">
+                            <form action = "/update_item/{{ item.id }}/{{ item.list_id }}" method = "POST" >
+                                <lable for="name">Name:</lable>
+                                <input type="text" id="name" name="name" value="{{ item.name }}">
+                                <label for="price">Price:</label>
+                                <input type="text" id="price" name="price" value="{{ item.price }}">
+                                <label for="cat">Catagory:</label>
+                                <select id="cat" name="cat">
+                                    {% for cat in catagory %}
+                                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="submit" value="update">
+                            </form>
+                            <button onClick="update_close('update_form_{{ item.id }}')">Cancel</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
 
